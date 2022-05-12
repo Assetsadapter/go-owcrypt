@@ -69,11 +69,11 @@ package owcrypt
 // #include "blake512.c"
 // #include "blake512.h"
 import "C"
-import "github.com/Assetsadapter/go-owcrypt/eddsa"
-
 import (
 	"errors"
 	"unsafe"
+
+	"github.com/Assetsadapter/go-owcrypt/eddsa"
 )
 
 const (
@@ -385,14 +385,6 @@ func Point_mulBaseG(scalar []byte, typeChoose uint32) []byte {
 	case ECC_CURVE_ED25519:
 		ret, _ := eddsa.ED25519_genPub(scalar)
 		return ret
-		break
-	case ECC_CURVE_BLS12381_G2_XMD_SHA_256_SSWU_RO_NUL, ECC_CURVE_BLS12381_G2_XMD_SHA_256_SSWU_RO_AUG:
-		ret, _ := bls12_381.GenPublicKey(scalar)
-		return ret
-		break
-	case ECC_CURVE_PASTA:
-		ret, _ := pasta.GenPublicKey(scalar)
-		return PointCompress(ret, typeChoose)
 		break
 	default:
 		return nil
