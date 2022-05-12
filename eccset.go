@@ -454,57 +454,6 @@ func RecoverPubkey(sig []byte, msg []byte, typeChoose uint32) ([]byte, uint16) {
 	return out[:], uint16(ret)
 }
 
-func Hash(data []byte, digestLen uint16, typeChoose uint32) []byte {
-	var length uint16
-	switch typeChoose {
-	case HASH_ALG_MD4, HASH_ALG_MD5:
-		length = 16
-		break
-	case HASH_ALG_SHA1, HASH_ALG_RIPEMD160, HASH_ALG_HASH160, HASH_ALG_KECCAK256_RIPEMD160, HASH_ALG_SHA3_256_RIPEMD160:
-		length = 20
-		break
-	case HASH_ALG_SHA256, HASh_ALG_DOUBLE_SHA256, HASH_ALG_SM3, HASH_ALG_KECCAK256, HASH_ALG_SHA3_256, HASH_ALG_BLAKE256:
-		length = 32
-		break
-	case HASH_ALG_SHA512, HASH_ALG_SHA3_512, HASH_ALG_KECCAK512, HASH_ALG_BLAKE512:
-		length = 64
-		break
-	case HASH_ALG_BLAKE2B, HASH_ALG_BLAKE2S:
-		length = digestLen
-		break
-	default:
-		break
-	}
-	ret := make([]byte, length)
-
-	msg := (*C.uchar)(unsafe.Pointer(&data[0]))
-	dig := (*C.uchar)(unsafe.Pointer(&ret[0]))
-
-	C.hash(msg, C.uint(len(data)), dig, C.ushort(digestLen), C.uint(typeChoose))
-
-	return ret[:]
-}
-
-func Hmac(key []byte, data []byte, typeChoose uint32) []byte {
-	var length uint16
-	switch typeChoose {
-	case HMAC_SHA256_ALG, HMAC_SM3_ALG:
-		length = 32
-		break
-	case HMAC_SHA512_ALG:
-		length = 64
-		break
-	default:
-		break
-	}
-	ret := make([]byte, length)
-	msg := (*C.uchar)(unsafe.Pointer(&data[0]))
-	k := (*C.uchar)(unsafe.Pointer(&key[0]))
-	out := (*C.uchar)(unsafe.Pointer(&ret[0]))
-	C.HMAC(k, C.ushort(len(key)), msg, C.ushort(len(data)), out, C.uint(typeChoose))
-	return ret[:]
-}
-
 func pbkdf2_hmac_sha512(pw []byte, salt []byte, iterations uint32, outlen uint32) []byte {
 	ret := make([]byte, outlen)
 	PassWord := (*C.uchar)(unsafe.Pointer(&pw[0]))
